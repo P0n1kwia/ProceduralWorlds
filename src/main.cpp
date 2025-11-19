@@ -7,13 +7,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 int main()
 {
-    // Inicjalizacja GLFW
+    
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Lub 4
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // Lub 6
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Tworzenie okna
+  
     GLFWwindow* window = glfwCreateWindow(800, 600, "Procedural World", NULL, NULL);
     if (window == NULL)
     {
@@ -24,14 +24,14 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Inicjalizacja GLAD
+  
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
-    // Pêtla renderuj¹ca
+   
     while (!glfwWindowShouldClose(window))
     {
         // Input

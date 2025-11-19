@@ -37,7 +37,7 @@ target_include_directories(glad PUBLIC "${CMAKE_SOURCE_DIR}/external/glad/includ
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-add_executable (ProceduralWorld "src/main.cpp" ${SOURCES})
+add_executable (ProceduralWorld "src/main.cpp" ${SOURCES} )
 
 target_include_directories(ProceduralWorld PRIVATE "${CMAKE_SOURCE_DIR}/include")
 

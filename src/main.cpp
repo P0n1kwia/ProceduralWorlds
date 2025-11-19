@@ -1,9 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <camera.hpp>
+#include <shader.hpp>
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+
 
 int main()
 {
@@ -30,6 +33,11 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, -3.0f);
+    camera cam(cameraPosition);
+    shader shad("shaders/vertexTest.glsl", "shaders/fragmentTest.glsl");
+
+
 
    
     while (!glfwWindowShouldClose(window))

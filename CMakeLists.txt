@@ -37,9 +37,12 @@ target_include_directories(glad PUBLIC "${CMAKE_SOURCE_DIR}/external/glad/includ
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-add_executable (ProceduralWorld "src/main.cpp" ${SOURCES} )
+add_executable (ProceduralWorld ${SOURCES})
 
-target_include_directories(ProceduralWorld PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(ProceduralWorld PRIVATE 
+    "${CMAKE_SOURCE_DIR}/include"
+    "${CMAKE_SOURCE_DIR}/external/stb_image"
+)
 
 target_link_libraries(ProceduralWorld PRIVATE glfw glad glm)
 
@@ -47,5 +50,11 @@ add_custom_command(TARGET ProceduralWorld POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/shaders"
     "$<TARGET_FILE_DIR:ProceduralWorld>/shaders"
+
+)
+add_custom_command(TARGET ProceduralWorld POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/textures"
+    "$<TARGET_FILE_DIR:ProceduralWorld>/textures"
 
 )

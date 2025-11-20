@@ -27,10 +27,10 @@ void camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 		position -= front * movementSpeed * deltaTime;
 		break;
 	case Camera_Movement::LEFT:
-		position -= -right * movementSpeed * deltaTime;
+		position -= right * movementSpeed * deltaTime;
 		break;
 	case Camera_Movement::RIGHT:
-		position += +right * movementSpeed * deltaTime;
+		position += right * movementSpeed * deltaTime;
 		break;
 	}
 }

@@ -1,3 +1,4 @@
+
 #include <shader.hpp>
 #include <glad/glad.h>
 #include <iostream>
@@ -82,7 +83,8 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 			}
 		}
 		
-		
+		else if (type == "Fragment")
+		{
 			glGetProgramiv(shader, GL_FRAGMENT_SHADER, &success);
 			if (!success)
 			{
@@ -90,8 +92,12 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 				glGetProgramInfoLog(shader, 1024, nullptr, log);
 				std::cerr << log << std::endl;
 			}
-		
+		}	
 	}
+}
+void shader::setMat4(const std::string& name, const glm::mat4& mat)
+{
+	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
 }
 shader::~shader()
 {

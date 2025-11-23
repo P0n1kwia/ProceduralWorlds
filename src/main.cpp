@@ -54,26 +54,13 @@ int main()
     }
 
     shader shad("shaders/vertexTest.glsl", "shaders/fragmentTest.glsl");
-    unsigned int textTest = load_texture("textures/wall.jpg");
-
-    
-    //std::vector<vertex> vertices = {
-    //    // Position (X, Y, Z)    // Normal (X, Y, Z)    // TexCoord (U, V)
-    //    {{ 0.5f,  0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {1.0f, 1.0f}}, // Prawy Góra (0)
-    //    {{ 0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {1.0f, 0.0f}}, // Prawy Dó³  (1)
-    //    {{-0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {0.0f, 0.0f}}, // Lewy Dó³   (2)
-    //    {{-0.5f,  0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {0.0f, 1.0f}}  // Lewy Góra  (3)
-    //};
-
    
-    //std::vector<unsigned int> indices = {
-    //    0, 1, 3, 
-    //    1, 2, 3  
-    //};
+
+
     
     
     terrain_generator terrain;
-    procedural_mesh mesh = terrain.GenerateFlatGrid(20, 20);
+    procedural_mesh mesh = terrain.GenerateFlatGrid(50, 50, 5,1.f, 1.f);
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -102,8 +89,6 @@ int main()
         //Render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textTest);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         mesh.Draw(shad);
 

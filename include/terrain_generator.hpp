@@ -1,5 +1,6 @@
 #pragma once
 #include <procedural_mesh.hpp>
+#include <FastNoiseLite.h>
 class terrain_generator
 {
 public:

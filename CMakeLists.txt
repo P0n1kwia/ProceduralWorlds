@@ -42,6 +42,7 @@ add_executable (ProceduralWorld ${SOURCES})
 target_include_directories(ProceduralWorld PRIVATE 
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/external/stb_image"
+    "${CMAKE_SOURCE_DIR}/external/fast_noise_lite"
 )
 
 target_link_libraries(ProceduralWorld PRIVATE glfw glad glm)

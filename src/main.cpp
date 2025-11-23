@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <camera.hpp>
 #include <shader.hpp>
-#include <procedural_mesh.hpp>
+#include <terrain_generator.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <iostream>
@@ -44,6 +44,7 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -56,22 +57,23 @@ int main()
     unsigned int textTest = load_texture("textures/wall.jpg");
 
     
-    std::vector<vertex> vertices = {
-        // Position (X, Y, Z)    // Normal (X, Y, Z)    // TexCoord (U, V)
-        {{ 0.5f,  0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {1.0f, 1.0f}}, // Prawy Góra (0)
-        {{ 0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {1.0f, 0.0f}}, // Prawy Dó³  (1)
-        {{-0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {0.0f, 0.0f}}, // Lewy Dó³   (2)
-        {{-0.5f,  0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {0.0f, 1.0f}}  // Lewy Góra  (3)
-    };
+    //std::vector<vertex> vertices = {
+    //    // Position (X, Y, Z)    // Normal (X, Y, Z)    // TexCoord (U, V)
+    //    {{ 0.5f,  0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {1.0f, 1.0f}}, // Prawy Góra (0)
+    //    {{ 0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {1.0f, 0.0f}}, // Prawy Dó³  (1)
+    //    {{-0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {0.0f, 0.0f}}, // Lewy Dó³   (2)
+    //    {{-0.5f,  0.5f, 0.0f},   {0.0f, 0.0f, 1.0f},    {0.0f, 1.0f}}  // Lewy Góra  (3)
+    //};
 
    
-    std::vector<unsigned int> indices = {
-        0, 1, 3, 
-        1, 2, 3  
-    };
-    procedural_mesh mesh(vertices, indices);
+    //std::vector<unsigned int> indices = {
+    //    0, 1, 3, 
+    //    1, 2, 3  
+    //};
     
     
+    terrain_generator terrain;
+    procedural_mesh mesh = terrain.GenerateFlatGrid(20, 20);
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -102,6 +104,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textTest);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         mesh.Draw(shad);
 
 

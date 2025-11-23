@@ -14,6 +14,7 @@ public:
 	procedural_mesh(const std::vector<vertex>& vert, const std::vector<unsigned int>& indicies);
 	void Draw(const shader& shad);
 	~procedural_mesh();
+
 private:
 	void SetupMesh();
 	unsigned int VAO, VBO, EBO;

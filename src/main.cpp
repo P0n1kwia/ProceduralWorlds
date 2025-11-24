@@ -53,12 +53,22 @@ int main()
         return -1;
     }
 
-    shader shad("shaders/terrainVertex.glsl", "shaders/terrainFragment.glsl");
+    shader terrainShader("shaders/terrainVertex.glsl", "shaders/terrainFragment.glsl");
    
-
-
+    auto smoothingFunc = [](float x)
+        {
+            return x * x * (3.f - 2.f * x);
+        };
+    terrainSettings settings;
+    settings.scale = 0.01;
+    settings.seed = 2137;
+    settings.lacunarity = 2.0f;
+    settings.persistence = 0.5f;
+    settings.smoothingFunction = smoothingFunc;
+    settings.octaves = 5;
     
-    
+    terrain_generator terrain;
+    procedural_mesh mesh = terrain.Generate(20, 20, settings);
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -79,16 +89,16 @@ int main()
         glm::mat4 view = cam.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.0f);
 
-        shad.use();
-        shad.setMat4("model", model);
-        shad.setMat4("view", view);
-        shad.setMat4("projection", projection);
+        terrainShader.use();
+        terrainShader.setMat4("model", model);
+        terrainShader.setMat4("view", view);
+        terrainShader.setMat4("projection", projection);
 
         //Render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //mesh.Draw(shad);
+        mesh.Draw(terrainShader);
 
 
         //Swap buffers

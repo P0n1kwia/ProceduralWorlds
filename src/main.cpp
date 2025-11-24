@@ -18,7 +18,7 @@ unsigned int WIDTH = 800;
 unsigned int HEIGHT = 600;
 
 //important stuff for camera
-glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraPosition = glm::vec3(10.0f, 3.0f, -3.0f);
 camera cam(cameraPosition);
 bool firstMouse = true;
 float lastX = WIDTH / 2.0f;
@@ -60,10 +60,10 @@ int main()
             return x * x * (3.f - 2.f * x);
         };
     terrainSettings settings;
-    settings.scale = 0.01;
+    settings.scale = 0.1f;
     settings.seed = 2137;
     settings.lacunarity = 2.0f;
-    settings.persistence = 0.5f;
+    settings.persistence = 0.1f;
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
     
@@ -97,7 +97,7 @@ int main()
         //Render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         mesh.Draw(terrainShader);
 
 

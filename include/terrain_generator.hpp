@@ -1,5 +1,5 @@
 #pragma once
-#include <FastNoiseLite.h>
+
 #include <procedural_mesh.hpp>
 #include <functional>
 struct terrainSettings
@@ -9,6 +9,8 @@ struct terrainSettings
 	float scale = 0.01f;
 	float lacunarity = 1.0f;
 	float persistence = 1.0f;
+	float frequency = 1.0f;
+	float maxMeshHeight = 2.0;
 	std::function<float(float)> smoothingFunction = [](float x) {return x; };
 };
 class terrain_generator

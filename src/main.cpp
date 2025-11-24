@@ -53,14 +53,12 @@ int main()
         return -1;
     }
 
-    shader shad("shaders/vertexTest.glsl", "shaders/fragmentTest.glsl");
+    shader shad("shaders/terrainVertex.glsl", "shaders/terrainFragment.glsl");
    
 
 
     
     
-    terrain_generator terrain;
-    procedural_mesh mesh = terrain.GenerateFlatGrid(50, 50, 5,1.f, 1.f);
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -90,7 +88,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        mesh.Draw(shad);
+        //mesh.Draw(shad);
 
 
         //Swap buffers

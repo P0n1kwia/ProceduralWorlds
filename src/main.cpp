@@ -55,24 +55,33 @@ int main()
 
     shader terrainShader("shaders/terrainVertex.glsl", "shaders/terrainFragment.glsl");
    
+    //terrain settings
     auto smoothingFunc = [](float x)
         {
             return x * x * (3.f - 2.f * x);
         };
     terrainSettings settings;
-    settings.scale = 0.1f;
+    settings.scale = 0.13f;
     settings.seed = 2137;
-    settings.lacunarity = 2.0f;
-    settings.persistence = 0.1f;
+    settings.lacunarity = 3.0f;
+    settings.persistence = 0.3f;
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
     
     terrain_generator terrain;
-    procedural_mesh mesh = terrain.Generate(20, 20, settings);
+    procedural_mesh mesh = terrain.Generate(100, 100, settings);
+
+    //lightning
+    glm::vec3 lighDir = glm::vec3(0.5f,1.0f,0.3f);
+    glm::vec3 lightColor = glm::vec3(1.0f);
+    terrainShader.use();
+    terrainShader.setVec3("lightDir", lighDir);
+    terrainShader.setVec3("lightColor", lightColor);
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     while (!glfwWindowShouldClose(window))
     {
 
@@ -89,10 +98,17 @@ int main()
         glm::mat4 view = cam.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.0f);
 
+
+        //terrain shader
         terrainShader.use();
         terrainShader.setMat4("model", model);
         terrainShader.setMat4("view", view);
         terrainShader.setMat4("projection", projection);
+        
+
+        //terrain shader aditional stuff
+        terrainShader.setFloat("maxMeshHeight", settings.maxMeshHeight);
+
 
         //Render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

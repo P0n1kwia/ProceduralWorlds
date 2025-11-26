@@ -3,7 +3,7 @@
 procedural_mesh terrain_generator::Generate(int width, int depth, const terrainSettings& settings) const
 {
 	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 	noise.SetFractalLacunarity(settings.lacunarity);
 	noise.SetFractalOctaves(settings.octaves);
 	noise.SetFractalGain(settings.persistence);

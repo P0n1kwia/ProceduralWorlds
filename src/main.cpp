@@ -18,7 +18,7 @@ unsigned int WIDTH = 800;
 unsigned int HEIGHT = 600;
 
 //important stuff for camera
-glm::vec3 cameraPosition = glm::vec3(10.0f, 3.0f, -3.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, 15.0f, -3.0f);
 camera cam(cameraPosition);
 bool firstMouse = true;
 float lastX = WIDTH / 2.0f;
@@ -61,18 +61,20 @@ int main()
             return x * x * (3.f - 2.f * x);
         };
     terrainSettings settings;
-    settings.scale = 0.13f;
-    settings.seed = 2137;
-    settings.lacunarity = 3.0f;
-    settings.persistence = 0.3f;
+    settings.scale = 0.007f;
+    settings.seed = 694202137;
+    settings.lacunarity = 6.0f;
+    settings.persistence = 0.1f;
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
+    settings.maxMeshHeight = 15.0f;
     
     terrain_generator terrain;
-    procedural_mesh mesh = terrain.Generate(100, 100, settings);
+    procedural_mesh mesh = terrain.Generate(2, 2, settings);
 
     //lightning
     glm::vec3 lighDir = glm::vec3(0.5f,1.0f,0.3f);
+    lighDir = glm::normalize(lighDir);
     glm::vec3 lightColor = glm::vec3(1.0f);
     terrainShader.use();
     terrainShader.setVec3("lightDir", lighDir);
@@ -96,7 +98,7 @@ int main()
         process_input(window, deltaTime);
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = cam.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(60.0f), float(WIDTH) / float(HEIGHT), 0.1f, 1000.0f);
 
 
         //terrain shader

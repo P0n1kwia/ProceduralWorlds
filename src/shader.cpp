@@ -74,7 +74,7 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 	{
 		if (type == "VERTEX")
 		{
-			glGetProgramiv(shader, GL_VERTEX_SHADER, &success);
+			glGetShaderiv(shader, GL_VERTEX_SHADER, &success);
 			if (!success)
 			{
 				std::cerr << "Failed to complie Vertex Shader!\n";
@@ -83,9 +83,9 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 			}
 		}
 		
-		else if (type == "Fragment")
+		else if (type == "FRAGMENT")
 		{
-			glGetProgramiv(shader, GL_FRAGMENT_SHADER, &success);
+			glGetShaderiv(shader, GL_FRAGMENT_SHADER, &success);
 			if (!success)
 			{
 				std::cerr << "Failed to complie Fragment Shader!\n";

@@ -1,39 +1,44 @@
 #include "terrain_generator.hpp"
 #include <FastNoiseLite.h>
-procedural_mesh terrain_generator::Generate(int width, int depth, const terrainSettings& settings) const
+meshData terrain_generator::Generate(int chunkX, int chunkZ, const terrainSettings& settings) const
 {
 	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	noise.SetFractalLacunarity(settings.lacunarity);
 	noise.SetFractalOctaves(settings.octaves);
 	noise.SetFractalGain(settings.persistence);
 	noise.SetFrequency(settings.frequency);
 	noise.SetFractalType(FastNoiseLite::FractalType_FBm);
+
+	
+
 	//generating verticies for our mesh
 	std::vector<vertex> verticies;
-	verticies.reserve((width + 1) * (depth + 1));
-	for (int z = 0; z <= depth; z++)
+	verticies.reserve((settings.chunkSize + 1) * (settings.chunkSize + 1));
+	for (int z = 0; z <= settings.chunkSize; z++)
 	{
-		for (int x = 0; x <= width; x++)
+		for (int x = 0; x <= settings.chunkSize; x++)
 		{
-			float heightValue  = noise.GetNoise((float)x * settings.scale, (float)z * settings.scale);
+			float worldX = chunkX * settings.chunkSize + x;
+			float worldZ = chunkZ * settings.chunkSize + z;
+			float heightValue  = noise.GetNoise(worldX * settings.scale, worldZ * settings.scale);
 			heightValue = (heightValue + 1.0f) * 0.5f;
 			heightValue = settings.smoothingFunction(heightValue);
 			
-			glm::vec3 pos = glm::vec3(x - width/2.0, heightValue*settings.maxMeshHeight , z - depth/2.0);
+			glm::vec3 pos = glm::vec3(x - settings.chunkSize /2.0, heightValue*settings.maxMeshHeight , z - settings.chunkSize /2.0);
 			glm::vec3 normals = glm::vec3(0.0f, 0.0f, 0.0f);
-			glm::vec2 texCoords = glm::vec2((float)x / width, (float)z / depth);
+			glm::vec2 texCoords = glm::vec2((float)x / settings.chunkSize, (float)z / settings.chunkSize);
 			vertex vert{ pos,normals,texCoords };
 			verticies.push_back(vert);
 		}
 	}
 	std::vector<unsigned int> indices;
-	indices.reserve(6 * width * depth);
-	int rowSize = width + 1;
+	indices.reserve(6 * settings.chunkSize * settings.chunkSize);
+	int rowSize = settings.chunkSize + 1;
 
-	for (int z = 0; z < depth; z++)
+	for (int z = 0; z < settings.chunkSize; z++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int x = 0; x < settings.chunkSize; x++)
 		{
 			unsigned int lowerLeft = z * rowSize + x;
 			unsigned int lowerRight = lowerLeft + 1;

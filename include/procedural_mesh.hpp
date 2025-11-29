@@ -8,10 +8,16 @@ struct vertex
 	glm::vec3 normal;
 	glm::vec2 texCoord;
 };
+struct meshData
+{
+	std::vector<vertex>	verticies;
+	std::vector<unsigned int> indicies;
+};
+
 class procedural_mesh
 {
 public:
-	procedural_mesh(const std::vector<vertex>& vert, const std::vector<unsigned int>& indicies);
+	procedural_mesh(const meshData& data);
 	void Draw(const shader& shad);
 	~procedural_mesh();
 

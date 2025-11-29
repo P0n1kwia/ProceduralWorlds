@@ -1,9 +1,9 @@
 #include "procedural_mesh.hpp"
 #include <glad/glad.h>
-procedural_mesh::procedural_mesh(const std::vector<vertex>& vert, const std::vector<unsigned int>& indi)
+procedural_mesh::procedural_mesh(const meshData& data)
 {
-	verticies = vert;
-	indicies = indi;
+	verticies = data.verticies;
+	indicies = data.indicies;
 	
 	SetupMesh();
 }

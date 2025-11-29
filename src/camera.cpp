@@ -6,7 +6,7 @@ camera::camera(const glm::vec3& pos)
 	yaw = -90.0f;
 	pitch = 0.0f;
 	worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	movementSpeed = 2.5f;
+	movementSpeed = 5.5f;
 	mouseSensitivity = 0.1f;
 	UpdateCameraVectors();
 }

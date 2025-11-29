@@ -28,8 +28,8 @@ void chunk_manager::Update(const glm::vec3& worldPos)
 	for (auto it = activeChunks.begin(); it != activeChunks.end();)
 	{
 		chunkCoord chunkPos = it->first;
-		int distX = std::fabs(chunkPos.first - worldPos.x);
-		int distZ = std::fabs(chunkPos.second - worldPos.z);
+		int distX = std::fabs(chunkPos.first - coords.first);
+		int distZ = std::fabs(chunkPos.second - coords.second);
 
 		int dist = std::max(distX, distZ);
 

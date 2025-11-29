@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <camera.hpp>
 #include <shader.hpp>
-#include <terrain_generator.hpp>
+#include <chunk_manager.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <iostream>
@@ -18,7 +18,7 @@ unsigned int WIDTH = 800;
 unsigned int HEIGHT = 600;
 
 //important stuff for camera
-glm::vec3 cameraPosition = glm::vec3(0.0f, 15.0f, -3.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, 15.0f, 0.0f);
 camera cam(cameraPosition);
 bool firstMouse = true;
 float lastX = WIDTH / 2.0f;
@@ -69,8 +69,7 @@ int main()
     settings.octaves = 5;
     settings.maxMeshHeight = 15.0f;
     
-    terrain_generator terrain;
-    procedural_mesh mesh = terrain.Generate(2, 2, settings);
+    chunk_manager manager(2, settings);
 
     //lightning
     glm::vec3 lighDir = glm::vec3(0.5f,1.0f,0.3f);
@@ -98,7 +97,7 @@ int main()
         process_input(window, deltaTime);
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = cam.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(60.0f), float(WIDTH) / float(HEIGHT), 0.1f, 1000.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(60.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.0f);
 
 
         //terrain shader
@@ -116,7 +115,9 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        mesh.Draw(terrainShader);
+        manager.Update(cam.GetPosition());
+        manager.Draw(terrainShader);
+
 
 
         //Swap buffers

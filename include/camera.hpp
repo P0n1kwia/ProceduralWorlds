@@ -15,6 +15,7 @@ public:
 	glm::mat4 GetViewMatrix();
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 	void ProcessMouseMovement(float xoffset, float yoffset);
+	glm::vec3 GetPosition() const;
 
 private:
 	void UpdateCameraVectors();

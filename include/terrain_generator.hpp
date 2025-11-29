@@ -1,11 +1,11 @@
 #pragma once
-#include <mesh_data.hpp>
+#include <procedural_mesh.hpp>
 #include <functional>
 struct terrainSettings
 {
 	int seed = 1337;
 	int octaves = 1;
-	int chunkSize = 128;
+	int chunkSize = 64;
 	float scale = 0.01f;
 	float lacunarity = 1.0f;
 	float persistence = 1.0f;
@@ -16,7 +16,7 @@ struct terrainSettings
 class terrain_generator
 {
 public:
-	meshData Generate(int width, int depth,const terrainSettings& settings) const;
+	meshData Generate(int chunkX, int chunkZ,const terrainSettings& settings) const;
 private:
 
 };

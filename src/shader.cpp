@@ -62,7 +62,7 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 	char log[1024];
 	if (type == "PROGRAM")
 	{
-		glGetProgramiv(ID, GL_PROGRAM, &success);
+		glGetProgramiv(ID, GL_COMPILE_STATUS, &success);
 		if (!success)
 		{
 			std::cerr << "Failed to link program!\n";
@@ -74,7 +74,7 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 	{
 		if (type == "VERTEX")
 		{
-			glGetShaderiv(shader, GL_VERTEX_SHADER, &success);
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 			if (!success)
 			{
 				std::cerr << "Failed to complie Vertex Shader!\n";
@@ -85,7 +85,7 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 		
 		else if (type == "FRAGMENT")
 		{
-			glGetShaderiv(shader, GL_FRAGMENT_SHADER, &success);
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 			if (!success)
 			{
 				std::cerr << "Failed to complie Fragment Shader!\n";

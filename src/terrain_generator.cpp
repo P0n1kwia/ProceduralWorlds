@@ -25,7 +25,7 @@ meshData terrain_generator::Generate(int chunkX, int chunkZ, const terrainSettin
 			heightValue = (heightValue + 1.0f) * 0.5f;
 			heightValue = settings.smoothingFunction(heightValue);
 			
-			glm::vec3 pos = glm::vec3(x - settings.chunkSize /2.0, heightValue*settings.maxMeshHeight , z - settings.chunkSize /2.0);
+			glm::vec3 pos = glm::vec3(worldX, heightValue*settings.maxMeshHeight , worldZ);
 			glm::vec3 normals = glm::vec3(0.0f, 0.0f, 0.0f);
 			glm::vec2 texCoords = glm::vec2((float)x / settings.chunkSize, (float)z / settings.chunkSize);
 			vertex vert{ pos,normals,texCoords };

@@ -1,11 +1,22 @@
 #pragma once
 #include <map>
 #include <memory>
-#include <chrono>
-#include <future>
+#include <thread>
+#include <mutex>
+#include <atomic>
 #include "procedural_mesh.hpp"
 #include "terrain_generator.hpp"
 using chunkCoord = std::pair<int, int>;
+class chunk_job
+{
+public:
+	std::thread worker;
+	std::atomic<bool> isDone;
+	meshData result;
+	chunk_job() : isDone(false) {}
+private:
+
+};
 class chunk_manager
 {
 public:
@@ -19,7 +30,7 @@ private:
 	//chunks that we can draw
 	std::map<chunkCoord, std::unique_ptr<procedural_mesh>> activeChunks;
 	//chunks that will be calculated on threads
-	std::map<chunkCoord, std::future<meshData>> pendingChunks;
+	std::map<chunkCoord, std::unique_ptr<chunk_job>> pendingChunks;
 
 
 

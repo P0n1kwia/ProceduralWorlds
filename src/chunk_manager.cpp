@@ -23,16 +23,29 @@ void chunk_manager::Update(const glm::vec3& worldPos)
 
 			if (!isReady && !isGenerating)
 			{
-				pendingChunks[targetCoord] = std::async(std::launch::async, &terrain_generator::Generate, &generator, targetCoord.first
-				,targetCoord.second, settings);
+				auto job = std::make_unique<chunk_job>();
+				meshData* resultPtr = &job->result;
+				std::atomic<bool>* donePtr = &job->isDone;
+				job->worker = std::thread([this, targetCoord, resultPtr, donePtr]()
+					{
+						*resultPtr = generator.Generate(targetCoord.first, targetCoord.second, settings);
+						*donePtr = true;
+					});
+				pendingChunks[targetCoord] = std::move(job);
+
 			}
 			for (auto it = pendingChunks.begin(); it != pendingChunks.end();)
 			{
-				if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+				if (it->second->isDone)
 				{
-					meshData data = it->second.get();
+					if (it->second->worker.joinable())
+					{
+						it->second->worker.join();
+					}
+					meshData data = std::move(it->second->result);
 					activeChunks[it->first] = std::make_unique<procedural_mesh>(data);
 					it = pendingChunks.erase(it);
+
 				}
 				else
 				{

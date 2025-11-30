@@ -1,6 +1,6 @@
-#include <camera.hpp>
+#include <Camera.hpp>
 
-camera::camera(const glm::vec3& pos)
+Camera::Camera(const glm::vec3& pos)
 {
 	position = pos;
 	yaw = -90.0f;
@@ -11,12 +11,12 @@ camera::camera(const glm::vec3& pos)
 	UpdateCameraVectors();
 }
 
-glm::mat4 camera::GetViewMatrix()
+glm::mat4 Camera::GetViewMatrix()
 {
 	return glm::lookAt(position, position + front, up);
 }
 
-void camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
 	switch (direction)
 	{
@@ -35,7 +35,7 @@ void camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 	}
 }
 
-void camera::ProcessMouseMovement(float xoffset, float yoffset)
+void Camera::ProcessMouseMovement(float xoffset, float yoffset)
 {
 	xoffset *= mouseSensitivity;
 	yoffset *= mouseSensitivity;
@@ -54,17 +54,17 @@ void camera::ProcessMouseMovement(float xoffset, float yoffset)
 	UpdateCameraVectors();
 }
 
-glm::vec3 camera::GetPosition() const
+glm::vec3 Camera::GetPosition() const
 {
 	return position;
 }
 
-void camera::SetMovementSpeed(float speed)
+void Camera::SetMovementSpeed(float speed)
 {
 	movementSpeed = speed;
 }
 
-void camera::UpdateCameraVectors()
+void Camera::UpdateCameraVectors()
 {
 	front.x = std::cos(glm::radians(yaw)) * std::cos(glm::radians(pitch));
 	front.y = std::sin(glm::radians(pitch));

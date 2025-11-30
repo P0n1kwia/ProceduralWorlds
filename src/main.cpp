@@ -19,7 +19,7 @@ unsigned int HEIGHT = 600;
 
 //important stuff for camera
 glm::vec3 cameraPosition = glm::vec3(0.0f, 15.0f, 0.0f);
-camera cam(cameraPosition);
+Camera camera(cameraPosition);
 float movementSpeed = 15.f;
 bool firstMouse = true;
 float lastX = WIDTH / 2.0f;
@@ -68,11 +68,11 @@ int main()
     settings.persistence = 0.1f;
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
-    settings.maxMeshHeight = 15.0f;
+    settings.maxMeshHeight = 25.0f;
 
     int viewDistance = 4;
     
-    chunk_manager manager(viewDistance, settings);
+    chunkManager manager(viewDistance, settings);
 
     //lightning
     glm::vec3 lighDir = glm::vec3(0.5f,1.0f,0.3f);
@@ -82,7 +82,7 @@ int main()
     terrainShader.setVec3("lightDir", lighDir);
     terrainShader.setVec3("lightColor", lightColor);
 
-    cam.SetMovementSpeed(movementSpeed);
+    camera.SetMovementSpeed(movementSpeed);
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     glEnable(GL_DEPTH_TEST);
@@ -100,7 +100,7 @@ int main()
         //Input & Camera Work
         process_input(window, deltaTime);
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = cam.GetViewMatrix();
+        glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 300.0f);
 
 
@@ -119,7 +119,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        manager.Update(cam.GetPosition());
+        manager.Update(camera.GetPosition());
         manager.Draw(terrainShader);
 
 
@@ -141,19 +141,19 @@ void process_input(GLFWwindow* window, float deltaTime)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        cam.ProcessKeyboard(Camera_Movement::FORWARD, deltaTime);
+        camera.ProcessKeyboard(Camera_Movement::FORWARD, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        cam.ProcessKeyboard(Camera_Movement::BACKWARD, deltaTime);
+        camera.ProcessKeyboard(Camera_Movement::BACKWARD, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        cam.ProcessKeyboard(Camera_Movement::LEFT, deltaTime);
+        camera.ProcessKeyboard(Camera_Movement::LEFT, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        cam.ProcessKeyboard(Camera_Movement::RIGHT, deltaTime);
+        camera.ProcessKeyboard(Camera_Movement::RIGHT, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
@@ -177,7 +177,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xpos;
     lastY = ypos;
 
-    cam.ProcessMouseMovement(xoffset, yoffset);
+    camera.ProcessMouseMovement(xoffset, yoffset);
 }
 //so far it will be a function -> in future it would be a class!
 unsigned int load_texture(const std::string& texturePath)

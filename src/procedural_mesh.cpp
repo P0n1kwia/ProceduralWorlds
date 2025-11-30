@@ -1,19 +1,19 @@
 #include "procedural_mesh.hpp"
 #include <glad/glad.h>
-procedural_mesh::procedural_mesh(const meshData& data)
+proceduralMesh::proceduralMesh(const meshData& data)
 {
 	verticies = data.verticies;
 	indicies = data.indicies;
 	
 	SetupMesh();
 }
-void procedural_mesh::Draw(const shader& shad)
+void proceduralMesh::Draw(const shader& shad)
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indicies.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
-procedural_mesh::~procedural_mesh()
+proceduralMesh::~proceduralMesh()
 {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
@@ -21,7 +21,7 @@ procedural_mesh::~procedural_mesh()
 
 }
 
-void procedural_mesh::SetupMesh()
+void proceduralMesh::SetupMesh()
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);

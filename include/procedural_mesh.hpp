@@ -14,12 +14,12 @@ struct meshData
 	std::vector<unsigned int> indicies;
 };
 
-class procedural_mesh
+class proceduralMesh
 {
 public:
-	procedural_mesh(const meshData& data);
+	proceduralMesh(const meshData& data);
 	void Draw(const shader& shad);
-	~procedural_mesh();
+	~proceduralMesh();
 
 private:
 	void SetupMesh();

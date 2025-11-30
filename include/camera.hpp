@@ -8,10 +8,10 @@ enum Camera_Movement
 	LEFT,
 	RIGHT
 };
-class camera
+class Camera
 {
 public:
-	camera(const glm::vec3& pos);
+	Camera(const glm::vec3& pos);
 	glm::mat4 GetViewMatrix();
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 	void ProcessMouseMovement(float xoffset, float yoffset);

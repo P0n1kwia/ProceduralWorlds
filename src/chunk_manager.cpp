@@ -1,12 +1,12 @@
 #include "chunk_manager.hpp"
 
-chunk_manager::chunk_manager(int viewDistance, const terrainSettings& settings)
+chunkManager::chunkManager(int viewDistance, const terrainSettings& settings)
 {
 	this->viewDistance = viewDistance;
 	this->settings = settings;
 }
 
-void chunk_manager::Update(const glm::vec3& worldPos)
+void chunkManager::Update(const glm::vec3& worldPos)
 {
 	chunkCoord coords = GetChunkCoordFromPosition(worldPos);
 
@@ -23,22 +23,23 @@ void chunk_manager::Update(const glm::vec3& worldPos)
 
 			if (!isReady && !isGenerating)
 			{
-				pendingChunks[targetCoord] = std::async(std::launch::async, &terrain_generator::Generate, &generator, targetCoord.first
+				pendingChunks[targetCoord] = std::async(std::launch::async, &terrainGenerator::Generate, &generator, targetCoord.first
 				,targetCoord.second, settings);
 			}
-			for (auto it = pendingChunks.begin(); it != pendingChunks.end();)
-			{
-				if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-				{
-					meshData data = it->second.get();
-					activeChunks[it->first] = std::make_unique<procedural_mesh>(data);
-					it = pendingChunks.erase(it);
-				}
-				else
-				{
-					it++;
-				}
-			}
+			
+		}
+	}
+	for (auto it = pendingChunks.begin(); it != pendingChunks.end();)
+	{
+		if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+		{
+			meshData data = it->second.get();
+			activeChunks[it->first] = std::make_unique<proceduralMesh>(data);
+			it = pendingChunks.erase(it);
+		}
+		else
+		{
+			it++;
 		}
 	}
 	for (auto it = activeChunks.begin(); it != activeChunks.end();)
@@ -66,7 +67,7 @@ void chunk_manager::Update(const glm::vec3& worldPos)
 	
 }
 
-void chunk_manager::Draw(shader& shader)
+void chunkManager::Draw(shader& shader)
 {
 	for (const auto& [coord, mesh] : activeChunks)
 	{
@@ -74,7 +75,7 @@ void chunk_manager::Draw(shader& shader)
 	}
 }
 
-chunkCoord chunk_manager::GetChunkCoordFromPosition(glm::vec3 pos)
+chunkCoord chunkManager::GetChunkCoordFromPosition(glm::vec3 pos)
 {
 	int x = std::floor(pos.x / (float)settings.chunkSize);
 	int z = std::floor(pos.z / (float)settings.chunkSize);

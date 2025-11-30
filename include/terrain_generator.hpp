@@ -13,7 +13,7 @@ struct terrainSettings
 	float maxMeshHeight = 2.0;
 	std::function<float(float)> smoothingFunction = [](float x) {return x; };
 };
-class terrain_generator
+class terrainGenerator
 {
 public:
 	meshData Generate(int chunkX, int chunkZ,const terrainSettings& settings) const;

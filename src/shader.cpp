@@ -62,7 +62,7 @@ void shader::CheckCompilationErrors(unsigned int shader, const std::string& type
 	char log[1024];
 	if (type == "PROGRAM")
 	{
-		glGetProgramiv(ID, GL_COMPILE_STATUS, &success);
+		glGetProgramiv(ID, GL_LINK_STATUS, &success);
 		if (!success)
 		{
 			std::cerr << "Failed to link program!\n";

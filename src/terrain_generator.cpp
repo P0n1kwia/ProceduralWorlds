@@ -1,7 +1,11 @@
 #include "terrain_generator.hpp"
 #include <FastNoiseLite.h>
+#include <thread>
+#include <iostream>
 meshData terrain_generator::Generate(int chunkX, int chunkZ, const terrainSettings& settings) const
 {
+
+	std::cout << "[THREAD " << std::this_thread::get_id() << "] generates chunk: " << chunkX << ", " << chunkZ << "\n";
 	FastNoiseLite noise;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	noise.SetFractalLacunarity(settings.lacunarity);

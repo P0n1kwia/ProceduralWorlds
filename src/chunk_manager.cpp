@@ -17,11 +17,27 @@ void chunk_manager::Update(const glm::vec3& worldPos)
 		{
 			chunkCoord targetCoord = { coords.first + x,coords.second + z };
 
-			if (activeChunks.find(targetCoord) == activeChunks.end())
-			{
-				auto meshData = generator.Generate(targetCoord.first, targetCoord.second, settings);
-				activeChunks[targetCoord] = std::make_unique<procedural_mesh>(meshData);
+			//we check whether we have that chunk in our map, or whether our chunk is waiting to be generated
+			bool isReady = activeChunks.find(targetCoord) != activeChunks.end();
+			bool isGenerating = pendingChunks.find(targetCoord) != pendingChunks.end();
 
+			if (!isReady && !isGenerating)
+			{
+				pendingChunks[targetCoord] = std::async(std::launch::async, &terrain_generator::Generate, &generator, targetCoord.first
+				,targetCoord.second, settings);
+			}
+			for (auto it = pendingChunks.begin(); it != pendingChunks.end();)
+			{
+				if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+				{
+					meshData data = it->second.get();
+					activeChunks[it->first] = std::make_unique<procedural_mesh>(data);
+					it = pendingChunks.erase(it);
+				}
+				else
+				{
+					it++;
+				}
 			}
 		}
 	}

@@ -16,6 +16,7 @@ public:
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 	void ProcessMouseMovement(float xoffset, float yoffset);
 	glm::vec3 GetPosition() const;
+	void SetMovementSpeed(float speed);
 
 private:
 	void UpdateCameraVectors();
@@ -25,7 +26,7 @@ private:
 	glm::vec3 right;
 	glm::vec3 worldUp;
 
-	float yaw, pitch;
 	float movementSpeed;
+	float yaw, pitch;
 	float mouseSensitivity;
 };

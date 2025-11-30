@@ -59,6 +59,11 @@ glm::vec3 camera::GetPosition() const
 	return position;
 }
 
+void camera::SetMovementSpeed(float speed)
+{
+	movementSpeed = speed;
+}
+
 void camera::UpdateCameraVectors()
 {
 	front.x = std::cos(glm::radians(yaw)) * std::cos(glm::radians(pitch));

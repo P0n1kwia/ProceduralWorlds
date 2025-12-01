@@ -49,7 +49,7 @@ std::string LSystemsGenerator::Generate(int iterations)
 
 			}
 		}
-		maxComplexity = std::ceil((float)nextString.length() / (float)currentString.length());
+		maxComplexity = std::fmax(std::ceil((float)nextString.length() / (float)currentString.length()),maxComplexity);
 		currentString = nextString;
 		
 	}

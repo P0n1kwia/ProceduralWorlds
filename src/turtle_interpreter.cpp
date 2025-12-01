@@ -15,7 +15,7 @@ std::vector<glm::mat4> turtleInterpreter::Translate(const std::string& s)
 	glm::vec3 cylinder = glm::vec3(width, length, width);
 	
 
-	result.reserve(s.length()/3);
+	result.reserve(s.length());
 	for (auto& ch : s)
 	{
 		glm::mat4 branchMatrix = glm::mat4(1.0f);
@@ -49,8 +49,11 @@ std::vector<glm::mat4> turtleInterpreter::Translate(const std::string& s)
 			matrixStack.push(currentTurtleMatrix);
 			break;
 		case ']':
-			currentTurtleMatrix = matrixStack.top();
-			matrixStack.pop();
+			if (!matrixStack.empty())
+			{
+				currentTurtleMatrix = matrixStack.top();
+				matrixStack.pop();
+			}
 			break;
 		}
 	}

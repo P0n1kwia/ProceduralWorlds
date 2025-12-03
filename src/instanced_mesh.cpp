@@ -36,15 +36,15 @@ void instancedMesh::SetupMesh(const meshData& geometry, const std::vector<glm::m
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * geometry.verticies.size(), geometry.verticies.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * geometry.indicies.size(), geometry.indicies.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, instanceMatricies.size() * sizeof(glm::mat4), instanceMatricies.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (void*)offsetof(vertex, position));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,sizeof(vertex), (void*)offsetof(vertex, position));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (void*)offsetof(vertex, normal));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, normal));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, (void*)offsetof(vertex, texCoord));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoord));
 
 	float vec4Size = sizeof(glm::vec4);
 	for (int i = 0; i < 4; i++)

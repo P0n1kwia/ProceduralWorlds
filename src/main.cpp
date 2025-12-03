@@ -63,7 +63,7 @@ int main()
             return x * x * (3.f - 2.f * x);
         };
     terrainSettings settings;
-    settings.scale = 0.007f;
+    settings.scale = 0.006f;
     settings.seed = 694202137;
     settings.lacunarity = 6.0f;
     settings.persistence = 0.1f;

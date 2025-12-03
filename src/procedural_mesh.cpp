@@ -1,5 +1,6 @@
 #include "procedural_mesh.hpp"
 #include <glad/glad.h>
+#include <cstddef>
 proceduralMesh::proceduralMesh(const meshData& data)
 {
 	verticies = data.verticies;

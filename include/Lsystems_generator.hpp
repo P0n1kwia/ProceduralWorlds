@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <random>
 struct rule
 {
 	std::string successor;
@@ -22,9 +23,10 @@ struct LSystemsSettings
 class LSystemsGenerator
 {
 public:
-	LSystemsGenerator(const LSystemsSettings& setting);
+	LSystemsGenerator(const LSystemsSettings& settings);
 	std::string Generate(int iterations);
 private:
 	LSystemsSettings settings;
+	
 	
 };

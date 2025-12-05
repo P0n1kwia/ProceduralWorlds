@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <camera.hpp>
 #include <shader.hpp>
@@ -6,7 +6,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <iostream>
-
+#include <Lsystems_generator.hpp>
+#include <turtle_interpreter.hpp>
+#include <plant_generator.hpp>
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow* window,float deltaTime);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -18,7 +20,7 @@ unsigned int WIDTH = 800;
 unsigned int HEIGHT = 600;
 
 //important stuff for camera
-glm::vec3 cameraPosition = glm::vec3(0.0f, 15.0f, 0.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 Camera camera(cameraPosition);
 float movementSpeed = 15.f;
 bool firstMouse = true;
@@ -62,13 +64,13 @@ int main()
             return x * x * (3.f - 2.f * x);
         };
     terrainSettings settings;
-    settings.scale = 0.007f;
+    settings.scale = 0.006f;
     settings.seed = 694202137;
     settings.lacunarity = 6.0f;
     settings.persistence = 0.1f;
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
-    settings.maxMeshHeight = 25.0f;
+    settings.maxMeshHeight = 2.0f;
 
     int viewDistance = 4;
     
@@ -87,6 +89,34 @@ int main()
     float lastFrame = 0.0f;
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+
+    //plants
+    shader plantShader("shaders/instancedVertex.glsl", "shaders/instancedFragment.glsl");
+    LSystemsSettings lSettings;
+    lSettings.isStochastic = false;
+    lSettings.axiom = "A";
+    lSettings.AddRule('A', "F[&+A][^--A][&++A][^A]"); 
+    lSettings.AddRule('F', "FF");
+
+
+
+   LSystemsGenerator lGen(lSettings);
+   std::string s = lGen.Generate(6);
+    turtleInterpreter turtle(25.0f, 0.05f, 0.03f); 
+    std::vector<glm::mat4> transforms = turtle.Translate(s);
+
+   
+    cylinderSettings cylSettings;
+    cylSettings.height = 5.0f;    
+    cylSettings.radiusBottom = 0.5f; 
+    cylSettings.radiusTop = 0.45f;
+    cylSettings.sectorCount = 30;     
+
+    plant_generator pGen;
+    auto plants = pGen.Generate(transforms, cylSettings);
+
+    instancedMesh treeMesh = pGen.Generate(transforms, cylSettings);
     while (!glfwWindowShouldClose(window))
     {
 
@@ -121,6 +151,16 @@ int main()
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         manager.Update(camera.GetPosition());
         manager.Draw(terrainShader);
+
+        plantShader.use(); 
+    
+        plantShader.setMat4("view", view);
+        plantShader.setMat4("projection", projection);
+
+
+        plantShader.setVec3("lightDir", lighDir);
+        plantShader.setVec3("lightColor", lightColor);
+        plants.Draw(plantShader);
 
 
 

@@ -3,7 +3,6 @@
 #include <functional>
 struct terrainSettings
 {
-	
 	int seed = 1337;
 	int octaves = 1;
 	int chunkSize = 64;

@@ -28,6 +28,10 @@ bool firstMouse = true;
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 
+
+bool guiMode = true; 
+bool cursorVisible = true;
+
 int main()
 {
     glfwInit();
@@ -35,7 +39,13 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", NULL, NULL);
+
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Procedural World", monitor, NULL);
+    WIDTH = mode->width;
+    HEIGHT = mode->height;
+
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -45,7 +55,8 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -109,10 +120,13 @@ int main()
 
     plant_generator pGen;
     instancedMesh plants = pGen.Generate(transforms, cylSettings);
+
+
     bool cursorEnabled = false;
 
     while (!glfwWindowShouldClose(window))
     {
+        // Delta time
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -126,7 +140,7 @@ int main()
 
         gui.RenderSettingsWindow(settings, lSettings);
 
-        // Check if terrain needs regeneration
+
         if (gui.TerrainNeedsRegeneration())
         {
             std::cout << "Regenerating terrain..." << std::endl;
@@ -135,7 +149,6 @@ int main()
             gui.ResetTerrainFlag();
         }
 
-        // Check if plants need regeneration
         if (gui.PlantNeedsRegeneration())
         {
             std::cout << "Regenerating plants..." << std::endl;
@@ -147,7 +160,6 @@ int main()
             gui.ResetPlantFlag();
         }
 
-        // Projection and view matrices
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 300.0f);
@@ -173,10 +185,9 @@ int main()
         plantShader.setVec3("lightColor", lightColor);
         plants.Draw(plantShader);
 
-       
         gui.EndFrame();
 
-  
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -194,22 +205,24 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void process_input(GLFWwindow* window, float deltaTime, GUI& gui)
 {
-  
+
     static bool tabPressed = false;
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS && !tabPressed)
     {
         tabPressed = true;
-        static bool cursorEnabled = false;
-        cursorEnabled = !cursorEnabled;
+        guiMode = !guiMode;
+        cursorVisible = guiMode;
 
-        if (cursorEnabled)
+        if (guiMode)
         {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            std::cout << "GUI Mode: ON (cursor visible)" << std::endl;
         }
         else
         {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            firstMouse = true; // Reset to prevent camera jump
+            firstMouse = true; 
+            std::cout << "GUI Mode: OFF (camera control)" << std::endl;
         }
     }
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_RELEASE)
@@ -217,8 +230,7 @@ void process_input(GLFWwindow* window, float deltaTime, GUI& gui)
         tabPressed = false;
     }
 
-
-    if (!gui.IsMouseOverGUI())
+    if (!guiMode)
     {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
@@ -249,21 +261,25 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     float xpos = static_cast<float>(xposIn);
     float ypos = static_cast<float>(yposIn);
 
-    if (firstMouse)
+    if (!guiMode)
     {
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos;
+
         lastX = xpos;
         lastY = ypos;
-        firstMouse = false;
+
+        camera.ProcessMouseMovement(xoffset, yoffset);
     }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-
-    lastX = xpos;
-    lastY = ypos;
-
-    camera.ProcessMouseMovement(xoffset, yoffset);
 }
+
 
 unsigned int load_texture(const std::string& texturePath)
 {

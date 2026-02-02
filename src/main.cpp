@@ -10,6 +10,7 @@
 #include <turtle_interpreter.hpp>
 #include <plant_generator.hpp>
 #include <gui.hpp>
+#include <skybox.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow* window, float deltaTime, GUI& gui);
@@ -121,6 +122,18 @@ int main()
     plant_generator pGen;
     instancedMesh plants = pGen.Generate(transforms, cylSettings);
 
+    //skybox
+    shader skyboxShader("shaders/skyboxVertex.glsl", "shaders/skyboxFragment.glsl");
+    std::string skyboxDir = "textures/skybox/";
+    std::vector<std::string > skyboxFaces;
+    skyboxFaces.push_back(skyboxDir + "right.jpg");
+    skyboxFaces.push_back(skyboxDir + "left.jpg");
+    skyboxFaces.push_back(skyboxDir + "top.jpg");
+    skyboxFaces.push_back(skyboxDir + "bottom.jpg");
+    skyboxFaces.push_back(skyboxDir + "front.jpg");
+    skyboxFaces.push_back(skyboxDir + "back.jpg");
+    skybox sky(skyboxFaces);
+
 
     bool cursorEnabled = false;
 
@@ -170,6 +183,19 @@ int main()
         terrainShader.setMat4("view", view);
         terrainShader.setMat4("projection", projection);
         terrainShader.setFloat("maxMeshHeight", settings.maxMeshHeight);
+
+
+        // Skybox shader
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+        glm::mat4 sView = glm::mat4(1.0f);
+        sView = glm::mat4(glm::mat3(view));
+        skyboxShader.setMat4("view", sView);
+        skyboxShader.setMat4("projection", projection);
+        sky.draw(skyboxShader);
+
+
+
 
         // Render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

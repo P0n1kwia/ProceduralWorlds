@@ -4,9 +4,9 @@
 #include <string>
 
 GUI::GUI(GLFWwindow* window)
-    : m_terrainChanged(false)
-    , m_plantChanged(false)
-    , m_showSettingsWindow(true)
+    : terrainChanged(false)
+    , plantChanged(false)
+    , showSettingsWindow(true)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -44,11 +44,11 @@ bool GUI::IsMouseOverGUI() const
 
 void GUI::RenderSettingsWindow(terrainSettings& terrain, LSystemsSettings& lsystem)
 {
-    if (!m_showSettingsWindow)
+    if (!showSettingsWindow)
         return;
 
     ImGui::SetNextWindowSize(ImVec2(400, 600), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Procedural World Settings", &m_showSettingsWindow);
+    ImGui::Begin("Procedural World Settings", &showSettingsWindow);
 
     if (ImGui::CollapsingHeader("Terrain Settings", ImGuiTreeNodeFlags_DefaultOpen))
     {
@@ -103,13 +103,13 @@ void GUI::RenderTerrainSettings(terrainSettings& settings)
 
     if (changed)
     {
-        m_terrainChanged = true;
+        terrainChanged = true;
     }
 
     ImGui::Spacing();
     if (ImGui::Button("Regenerate Terrain"))
     {
-        m_terrainChanged = true;
+        terrainChanged = true;
     }
 }
 
@@ -207,12 +207,12 @@ void GUI::RenderLSystemSettings(LSystemsSettings& settings)
 
     if (changed)
     {
-        m_plantChanged = true;
+        plantChanged = true;
     }
 
     ImGui::Spacing();
     if (ImGui::Button("Regenerate Plants"))
     {
-        m_plantChanged = true;
+        plantChanged = true;
     }
 }

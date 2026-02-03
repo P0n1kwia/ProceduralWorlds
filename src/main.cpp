@@ -22,7 +22,7 @@ unsigned int WIDTH = 1600;
 unsigned int HEIGHT = 1200;
 
 // Important stuff for camera
-glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, 25.0f, 0.0f);
 Camera camera(cameraPosition);
 float movementSpeed = 15.f;
 bool firstMouse = true;
@@ -40,13 +40,18 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+//#ifdef DEBUG
+//    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", nullptr, nullptr);
+//#else
+//    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+//    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+//    WIDTH = mode->width;
+//    HEIGHT = mode->height;
+//    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", monitor, nullptr);
+//#endif // DEBUG
 
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Procedural World", monitor, NULL);
-    WIDTH = mode->width;
-    HEIGHT = mode->height;
-
+   
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", nullptr, nullptr);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -81,7 +86,7 @@ int main()
     settings.persistence = 0.1f;
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
-    settings.maxMeshHeight = 2.0f;
+    settings.maxMeshHeight = 25.0f;
 
     int viewDistance = 4;
     chunkManager manager(viewDistance, settings);
@@ -126,12 +131,12 @@ int main()
     shader skyboxShader("shaders/skyboxVertex.glsl", "shaders/skyboxFragment.glsl");
     std::string skyboxDir = "textures/skybox/";
     std::vector<std::string > skyboxFaces;
-    skyboxFaces.push_back(skyboxDir + "right.jpg");
-    skyboxFaces.push_back(skyboxDir + "left.jpg");
-    skyboxFaces.push_back(skyboxDir + "top.jpg");
-    skyboxFaces.push_back(skyboxDir + "bottom.jpg");
-    skyboxFaces.push_back(skyboxDir + "front.jpg");
-    skyboxFaces.push_back(skyboxDir + "back.jpg");
+    skyboxFaces.push_back(skyboxDir + "right.png");
+    skyboxFaces.push_back(skyboxDir + "left.png");
+    skyboxFaces.push_back(skyboxDir + "top.png");
+    skyboxFaces.push_back(skyboxDir + "bottom.png");
+    skyboxFaces.push_back(skyboxDir + "front.png");
+    skyboxFaces.push_back(skyboxDir + "back.png");
     skybox sky(skyboxFaces);
 
 
@@ -144,7 +149,9 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-
+        // Render
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         process_input(window, deltaTime, gui);
 
 
@@ -153,7 +160,19 @@ int main()
 
         gui.RenderSettingsWindow(settings, lSettings);
 
+        // Skybox shader
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 300.0f);
 
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+        glm::mat4 sView = glm::mat4(1.0f);
+        sView = glm::mat4(glm::mat3(view));
+        skyboxShader.setMat4("view", sView);
+        skyboxShader.setMat4("projection", projection);
+        sky.draw(skyboxShader);
+        glDepthFunc(GL_LESS);
         if (gui.TerrainNeedsRegeneration())
         {
             std::cout << "Regenerating terrain..." << std::endl;
@@ -173,9 +192,7 @@ int main()
             gui.ResetPlantFlag();
         }
 
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 300.0f);
+        
 
         // Terrain shader
         terrainShader.use();
@@ -185,21 +202,11 @@ int main()
         terrainShader.setFloat("maxMeshHeight", settings.maxMeshHeight);
 
 
-        // Skybox shader
-        glDepthFunc(GL_LEQUAL);
-        skyboxShader.use();
-        glm::mat4 sView = glm::mat4(1.0f);
-        sView = glm::mat4(glm::mat3(view));
-        skyboxShader.setMat4("view", sView);
-        skyboxShader.setMat4("projection", projection);
-        sky.draw(skyboxShader);
+    
 
 
 
-
-        // Render
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      
 
         manager.Update(camera.GetPosition());
         manager.Draw(terrainShader);

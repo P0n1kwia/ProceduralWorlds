@@ -117,7 +117,6 @@ instancedMesh plant_generator::Generate(const std::vector<glm::mat4>& matricies,
         }
     }
 
-    // Zwracamy gotowy InstancedMesh
     return instancedMesh(data, matricies);
 }
 

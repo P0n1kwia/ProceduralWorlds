@@ -16,14 +16,18 @@ meshData terrainGenerator::Generate(int chunkX, int chunkZ, const terrainSetting
 	
 
 	//generating verticies for our mesh
+
+	int increment = settings.levelOfDetail == 0 ? 1 : settings.levelOfDetail *2;
+	int lineVerticies = (settings.chunkSize-1) / increment + 1;
+	float spacing = (float)settings.chunkSize / (lineVerticies - 1);
 	std::vector<vertex> verticies;
 	verticies.reserve((settings.chunkSize + 1) * (settings.chunkSize + 1));
-	for (int z = 0; z <= settings.chunkSize; z++)
+	for (int z = 0; z < lineVerticies;z++)
 	{
-		for (int x = 0; x <= settings.chunkSize; x++)
+		for (int x = 0; x < lineVerticies;x++)
 		{
-			float worldX = chunkX * settings.chunkSize + x;
-			float worldZ = chunkZ * settings.chunkSize + z;
+			float worldX = chunkX * settings.chunkSize + x * spacing;
+			float worldZ = chunkZ * settings.chunkSize + z * spacing;
 			float heightValue  = noise.GetNoise(worldX * settings.scale, worldZ * settings.scale);
 			heightValue = (heightValue + 1.0f) * 0.5f;
 			heightValue = settings.smoothingFunction(heightValue);
@@ -38,14 +42,15 @@ meshData terrainGenerator::Generate(int chunkX, int chunkZ, const terrainSetting
 	std::vector<unsigned int> indices;
 	indices.reserve(6 * settings.chunkSize * settings.chunkSize);
 	int rowSize = settings.chunkSize + 1;
+	
 
-	for (int z = 0; z < settings.chunkSize; z++)
+	for (int z = 0; z < lineVerticies-1; z++)
 	{
-		for (int x = 0; x < settings.chunkSize; x++)
+		for (int x = 0; x < lineVerticies-1;x++ )
 		{
-			unsigned int lowerLeft = z * rowSize + x;
+			unsigned int lowerLeft = z * lineVerticies + x;
 			unsigned int lowerRight = lowerLeft + 1;
-			unsigned int upperLeft = (z + 1) * rowSize + x;
+			unsigned int upperLeft = (z + 1) * lineVerticies + x;
 			unsigned int upperRight = upperLeft + 1;
 
 			// triangle 1

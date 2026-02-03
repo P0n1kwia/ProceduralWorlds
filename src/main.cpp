@@ -77,7 +77,7 @@ int main()
     // Terrain settings
     auto smoothingFunc = [](float x)
         {
-            return x * x * (3.f - 2.f * x);
+            return pow(x+0.05f, 4);
         };
     terrainSettings settings;
     settings.scale = 0.006f;
@@ -87,6 +87,7 @@ int main()
     settings.smoothingFunction = smoothingFunc;
     settings.octaves = 5;
     settings.maxMeshHeight = 25.0f;
+    settings.levelOfDetail = 1;
 
     int viewDistance = 4;
     chunkManager manager(viewDistance, settings);
@@ -163,7 +164,7 @@ int main()
         // Skybox shader
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 300.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 500.0f);
 
         glDepthFunc(GL_LEQUAL);
         skyboxShader.use();

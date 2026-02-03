@@ -81,11 +81,13 @@ void GUI::RenderTerrainSettings(terrainSettings& settings)
     changed |= ImGui::SliderFloat("Lacunarity", &settings.lacunarity, 1.0f, 10.0f);
     changed |= ImGui::SliderFloat("Persistence", &settings.persistence, 0.01f, 1.0f);
     changed |= ImGui::SliderInt("Octaves", &settings.octaves, 1, 10);
-
+    
     ImGui::Spacing();
     ImGui::Text("Height Settings");
     changed |= ImGui::SliderFloat("Max Height", &settings.maxMeshHeight, 0.5f, 50.0f);
-
+    ImGui::Spacing();
+    ImGui::Text("Level Of Detail");
+    changed |= ImGui::SliderInt("LOD", &settings.levelOfDetail, 1, 6);
     ImGui::Spacing();
     ImGui::Text("Seed");
     int seed = static_cast<int>(settings.seed);

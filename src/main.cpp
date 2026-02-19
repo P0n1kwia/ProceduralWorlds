@@ -185,11 +185,11 @@ int main()
         if (gui.PlantNeedsRegeneration())
         {
             std::cout << "Regenerating plants..." << std::endl;
-            LSystemsGenerator newLGen(lSettings);
-            std::string newS = newLGen.Generate(6);
+            lGen = LSystemsGenerator(lSettings); 
+            std::string newS = lGen.Generate(6);
             turtleInterpreter newTurtle(25.0f, 0.05f, 0.03f);
             std::vector<glm::mat4> newTransforms = newTurtle.Translate(newS);
-            plants = pGen.Generate(newTransforms, cylSettings);
+            plants = pGen.Generate(newTransforms, cylSettings);  
             gui.ResetPlantFlag();
         }
 

@@ -30,6 +30,31 @@ normalSmoother::~normalSmoother()
     glDeleteProgram(programID);
 }
 
+normalSmoother::normalSmoother(normalSmoother&& other) noexcept : programID(other.programID)
+, loc_borderLength(other.loc_borderLength)
+, loc_edgeType(other.loc_edgeType)
+, loc_lineVerts(other.loc_lineVerts)
+{
+    other.programID = 0;
+}
+
+
+normalSmoother& normalSmoother::operator=(normalSmoother&& other) noexcept
+{
+    if (this != &other)
+    {
+        glDeleteProgram(programID);
+
+        programID = other.programID;
+        loc_borderLength = other.loc_borderLength;
+        loc_edgeType = other.loc_edgeType;
+        loc_lineVerts = other.loc_lineVerts;
+
+        other.programID = 0;  
+    }
+    return *this;
+}
+
 void normalSmoother::Dispatch(unsigned int vboA, unsigned int vboB,
                                ChunkEdge edge, int lineVerts,
                                std::ptrdiff_t vboSizeA, std::ptrdiff_t vboSizeB)

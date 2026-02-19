@@ -185,25 +185,35 @@ void GUI::RenderLSystemSettings(LSystemsSettings& settings)
         changed = true;
     }
 
-    ImGui::SameLine();
-    if (ImGui::Button("Simple Tree"))
-    {
-        settings.axiom = "F";
-        settings.rules.clear();
-        settings.AddRule('F', "FF+[+F-F-F]-[-F+F+F]");
-        settings.isStochastic = false;
-        strcpy(axiomBuffer, "F");
-        changed = true;
-    }
-
     if (ImGui::Button("Branching Plant"))
     {
         settings.axiom = "X";
         settings.rules.clear();
-        settings.AddRule('X', "F[+X]F[-X]+X");
+        settings.AddRule('X', "F[&+X]F[^-X]&X");
         settings.AddRule('F', "FF");
         settings.isStochastic = false;
         strcpy(axiomBuffer, "X");
+        changed = true;
+    }
+    if (ImGui::Button("Conifer"))
+    {
+        settings.axiom = "A";
+        settings.rules.clear();
+        settings.AddRule('A', "F[&&&\A][^^^/A][&&&//A][^^^\\A]");
+        settings.AddRule('F', "FF");
+        settings.isStochastic = false;
+        strcpy(axiomBuffer, "A");
+        changed = true;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Spreading Oak"))
+    {
+        settings.axiom = "A";
+        settings.rules.clear();
+        settings.AddRule('A', "F[&+F&A][^-F^A][&-F&A][^+F^A]");
+        settings.AddRule('F', "FF");
+        settings.isStochastic = false;
+        strcpy(axiomBuffer, "A");
         changed = true;
     }
 

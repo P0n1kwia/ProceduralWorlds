@@ -16,6 +16,33 @@ instancedMesh::~instancedMesh()
 	glDeleteVertexArrays(1, &VAO);
 }
 
+instancedMesh::instancedMesh(instancedMesh&& other) noexcept : VBO(other.VBO), EBO(other.EBO), VAO(other.VAO), instanceVBO(other.instanceVBO)
+, indexCount(other.indexCount), instanceCount(other.instanceCount)
+{
+	other.VAO = other.VBO = other.EBO = other.instanceVBO = 0;
+}
+
+instancedMesh& instancedMesh::operator=(instancedMesh&& other) noexcept
+{
+	if (this != &other)
+	{
+		glDeleteBuffers(1, &VBO);
+		glDeleteBuffers(1, &EBO);
+		glDeleteBuffers(1, &instanceVBO);
+		glDeleteVertexArrays(1, &VAO);
+		VAO = other.VAO;
+		VBO = other.VBO;
+		EBO = other.EBO;
+		instanceVBO = other.instanceVBO;
+		indexCount = other.indexCount;
+		instanceCount = other.instanceCount;
+
+		
+		other.VAO = other.VBO = other.EBO = other.instanceVBO = 0;
+	}
+	return *this;
+}
+
 void instancedMesh::Draw(shader& shad)
 {
 	glBindVertexArray(VAO);

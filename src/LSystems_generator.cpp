@@ -9,6 +9,8 @@ LSystemsGenerator::LSystemsGenerator(const LSystemsSettings& settings)
 
 std::string LSystemsGenerator::Generate(int iterations)
 {
+	if (cache.has_value() && cacheIterations == iterations)
+		return cache.value();
 	std::string currentString = settings.axiom;
 	int maxComplexity = 2; // heurestic number that will be used for reserving nextString. It is equal to ceil of multiple of current string we got
 	//eg. we had "FFF" but applying our rules we got "FABFABFAB" so maxComplecity will be set to 3
@@ -50,8 +52,16 @@ std::string LSystemsGenerator::Generate(int iterations)
 			}
 		}
 		maxComplexity = std::fmax(std::ceil((float)nextString.length() / (float)currentString.length()),maxComplexity);
-		currentString = nextString;
+		currentString = std::move(nextString);
 		
 	}
+	cacheIterations = iterations;
+	cache = currentString;
 	return currentString;
+}
+
+void LSystemsGenerator::Invalidate()
+{
+	cache.reset();
+	cacheIterations = -1;
 }

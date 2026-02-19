@@ -7,6 +7,8 @@ class instancedMesh
 public:
 	instancedMesh(const meshData& geometry, const std::vector<glm::mat4>& instanceMatricies);
 	~instancedMesh();
+	instancedMesh(instancedMesh&& other) noexcept;
+	instancedMesh& operator=(instancedMesh&& other) noexcept;
 	void Draw(shader& shad);
 
 private:

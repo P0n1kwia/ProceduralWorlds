@@ -6,6 +6,7 @@ meshData terrainGenerator::Generate(int chunkX, int chunkZ, const terrainSetting
 
 	
 	FastNoiseLite noise;
+	noise.SetSeed(settings.seed);
 	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	noise.SetFractalLacunarity(settings.lacunarity);
 	noise.SetFractalOctaves(settings.octaves);

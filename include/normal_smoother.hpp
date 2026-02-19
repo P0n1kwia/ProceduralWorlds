@@ -15,6 +15,8 @@ class normalSmoother
 public:
     normalSmoother(const std::string& shaderPath);
     ~normalSmoother();
+    normalSmoother(normalSmoother&& other) noexcept;
+    normalSmoother& operator=(normalSmoother&& other) noexcept;
 
     void Dispatch(unsigned int vboA, unsigned int vboB,
         ChunkEdge edge, int lineVerts,

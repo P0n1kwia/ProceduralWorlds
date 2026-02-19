@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <random>
+#include <optional>
 struct rule
 {
 	std::string successor;
@@ -25,8 +26,10 @@ class LSystemsGenerator
 public:
 	LSystemsGenerator(const LSystemsSettings& settings);
 	std::string Generate(int iterations);
+	void Invalidate();
 private:
 	LSystemsSettings settings;
-	
+	std::optional<std::string> cache;
+	int cacheIterations = -1;
 	
 };

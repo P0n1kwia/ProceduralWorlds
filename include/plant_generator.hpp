@@ -2,12 +2,12 @@
 #include <instanced_mesh.hpp>
 struct cylinderSettings
 {
-	int sectorCount;
-	int sectorStep; // 2*PI / sectorCount
-	float radiusTop;
-	float radiusBottom;
-	float height;
-	const float PI = 3.1415926f;
+	int sectorCount=1;
+	int sectorStep=1; // 2*PI / sectorCount
+	float radiusTop=1;
+	float radiusBottom=1;
+	float height=1;
+	float PI = 3.1415926f;
 	void CalculateSectorStep()
 	{
 		sectorStep = 2 * PI / sectorCount;

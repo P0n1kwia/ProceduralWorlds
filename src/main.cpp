@@ -11,6 +11,7 @@
 #include <plant_generator.hpp>
 #include <gui.hpp>
 #include <skybox.hpp>
+#include "forest_Generator.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow* window, float deltaTime, GUI& gui);
@@ -90,7 +91,6 @@ int main()
     settings.levelOfDetail = 1;
 
     int viewDistance = 4;
-    chunkManager manager(viewDistance, settings);
 
     // Lightning
     glm::vec3 lighDir = glm::vec3(0.5f, 1.0f, 0.3f);
@@ -141,6 +141,20 @@ int main()
     skybox sky(skyboxFaces);
 
 
+    forestSettings fSettings;
+    fSettings.treesPerChunk = 35;
+    fSettings.minHeight = 0.08f;
+    fSettings.maxHeight = 0.72f;
+    fSettings.maxSlope = 0.65f;
+    fSettings.minScale = 0.5f;
+    fSettings.maxScale = 1.5f;
+    fSettings.lsystemIterations = 5;
+    fSettings.lsystem = lSettings;  
+    fSettings.cylinder = cylSettings;
+
+    chunkManager manager(viewDistance, settings, fSettings);
+
+
     bool cursorEnabled = false;
 
     while (!glfwWindowShouldClose(window))
@@ -178,7 +192,7 @@ int main()
         {
             std::cout << "Regenerating terrain..." << std::endl;
             settings.smoothingFunction = smoothingFunc; 
-            manager = chunkManager(viewDistance, settings);
+            manager = chunkManager(viewDistance, settings,fSettings);
             gui.ResetTerrainFlag();
         }
 
@@ -210,7 +224,7 @@ int main()
       
 
         manager.Update(camera.GetPosition());
-        manager.Draw(terrainShader);
+        manager.Draw(terrainShader,plantShader);
 
         plantShader.use();
         plantShader.setMat4("view", view);

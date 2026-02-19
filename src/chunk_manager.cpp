@@ -1,11 +1,23 @@
 #include "chunk_manager.hpp"
 
-chunkManager::chunkManager(int viewDistance, const terrainSettings& settings)
+
+
+chunkManager::chunkManager(int viewDistance, const terrainSettings& terrainS, const forestSettings& forestS)
 {
 	this->viewDistance = viewDistance;
-	this->settings = settings;
+	this->settings = terrainS;
+	this->forest = forestS;
 }
+static generatedChunk GenerateChunkAsync(int chunkX, int chunkZ, terrainSettings tCfg, forestSettings  fCfg)
+{
+	terrainGenerator tGen;
+	forestGenerator  fGen;
 
+	generatedChunk result;
+	result.terrainData = tGen.Generate(chunkX, chunkZ, tCfg);
+	//result.forestData = fGen.GenerateData(chunkX, chunkZ, tCfg, fCfg); uncomment this to generate forests, currently disabled for performance reasons
+	return result;
+}
 void chunkManager::Update(const glm::vec3& worldPos)
 {
 	chunkCoord coords = GetChunkCoordFromPosition(worldPos);
@@ -23,8 +35,11 @@ void chunkManager::Update(const glm::vec3& worldPos)
 
 			if (!isReady && !isGenerating)
 			{
-				pendingChunks[targetCoord] = std::async(std::launch::async, &terrainGenerator::Generate, &generator, targetCoord.first
-				,targetCoord.second, settings);
+				pendingChunks[targetCoord] = std::async(
+					std::launch::async,
+					GenerateChunkAsync,
+					targetCoord.first, targetCoord.second,
+					settings, forest);
 			}
 			
 		}
@@ -33,11 +48,18 @@ void chunkManager::Update(const glm::vec3& worldPos)
 	{
 		if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		{
-			meshData data = it->second.get();
 			chunkCoord coord = it->first;
-			auto mesh = std::make_unique<proceduralMesh>(data);
-			SmoothBorders(coord, *mesh);
-			activeChunks[coord] = std::move(mesh);
+			generatedChunk gen = it->second.get();
+
+			chunkData cd;
+			cd.terrain = std::make_unique<proceduralMesh>(gen.terrainData);
+
+			// BuildMesh does the GL upload - safe here because we're on the main thread
+			if (gen.forestData.has_value())
+				cd.forest = forestGenerator::BuildMesh(std::move(*gen.forestData));
+
+			SmoothBorders(coord, *cd.terrain);
+			activeChunks[coord] = std::move(cd);
 			it = pendingChunks.erase(it);
 		}
 		else
@@ -70,11 +92,17 @@ void chunkManager::Update(const glm::vec3& worldPos)
 	
 }
 
-void chunkManager::Draw(shader& shader)
+void chunkManager::Draw(shader& terrainShader, shader& plantShader)
 {
-	for (const auto& [coord, mesh] : activeChunks)
+	for (const auto& [coord, cd] : activeChunks)
 	{
-		mesh->Draw(shader);
+		cd.terrain->Draw(terrainShader);
+	}
+	plantShader.use();
+	for (auto& [coord, cd] : activeChunks)
+	{
+		if (cd.forest.has_value())
+			cd.forest->Draw(plantShader);
 	}
 }
 
@@ -105,7 +133,7 @@ void chunkManager::SmoothBorders(const chunkCoord& c, proceduralMesh& newChunk)
 		chunkCoord neighCoord = { c.first + e.offset.first,c.second + e.offset.second };
 		auto it = activeChunks.find(neighCoord);
 		if (it == activeChunks.end()) continue; // neighbour not loaded yet
-		proceduralMesh& neighb = *it->second;
+		proceduralMesh& neighb = *it->second.terrain;
 		int lineVerts = newChunk.GetLineVerts();
 
 		smooth.Dispatch(newChunk.GetVBO(), neighb.GetVBO(), e.edgeOfNewChunk, lineVerts, newChunk.GetVBOSize(), neighb.GetVBOSize());

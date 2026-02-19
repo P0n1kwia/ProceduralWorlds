@@ -37,7 +37,7 @@ LOD (Level of Detail) is implemented for terrain, but not for vegetation. LOD se
 ## Media
 
 ![Procedural World Screenshot](media/mainWindow1.png)  
-![Procedural World Screenshot](media/mainWindow1.png)  
+![Procedural World Screenshot](media/mainWindow2.png)  
 ![L-system Example 1](media/stoch1.png)  
 ![L-system Example 2](media/stoch2.png)  
 ![L-system Example 3](media/stoch3.png)  

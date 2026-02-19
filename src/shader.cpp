@@ -107,6 +107,10 @@ void shader::setVec3(const std::string name, const glm::vec3& vec)
 {
 	glUniform3fv(GetUniformLocation(name), 1, &vec[0]);
 }
+void shader::setMat3(const std::string& name, const glm::mat3& mat)
+{
+	glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
+}
 shader::~shader()
 {
 	glDeleteProgram(ID);

@@ -31,7 +31,7 @@ float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 
 
-bool guiMode = true; 
+bool guiMode = true;
 bool cursorVisible = true;
 
 int main()
@@ -41,17 +41,17 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-//#ifdef DEBUG
-//    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", nullptr, nullptr);
-//#else
-//    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-//    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-//    WIDTH = mode->width;
-//    HEIGHT = mode->height;
-//    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", monitor, nullptr);
-//#endif // DEBUG
+    //#ifdef DEBUG
+    //    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", nullptr, nullptr);
+    //#else
+    //    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    //    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    //    WIDTH = mode->width;
+    //    HEIGHT = mode->height;
+    //    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", monitor, nullptr);
+    //#endif // DEBUG
 
-   
+
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Procedural World", nullptr, nullptr);
     if (window == NULL)
     {
@@ -78,7 +78,7 @@ int main()
     // Terrain settings
     auto smoothingFunc = [](float x)
         {
-            return pow(x+0.05f, 4);
+            return pow(x + 0.05f, 4);
         };
     terrainSettings settings;
     settings.scale = 0.006f;
@@ -123,7 +123,7 @@ int main()
     cylSettings.height = 5.0f;
     cylSettings.radiusBottom = 0.5f;
     cylSettings.radiusTop = 0.45f;
-    cylSettings.sectorCount = 30;
+    cylSettings.sectorCount = 50;
 
     plant_generator pGen;
     instancedMesh plants = pGen.Generate(transforms, cylSettings);
@@ -149,7 +149,7 @@ int main()
     fSettings.minScale = 0.5f;
     fSettings.maxScale = 1.5f;
     fSettings.lsystemIterations = 5;
-    fSettings.lsystem = lSettings;  
+    fSettings.lsystem = lSettings;
     fSettings.cylinder = cylSettings;
 
     chunkManager manager(viewDistance, settings, fSettings);
@@ -191,23 +191,23 @@ int main()
         if (gui.TerrainNeedsRegeneration())
         {
             std::cout << "Regenerating terrain..." << std::endl;
-            settings.smoothingFunction = smoothingFunc; 
-            manager = chunkManager(viewDistance, settings,fSettings);
+            settings.smoothingFunction = smoothingFunc;
+            manager = chunkManager(viewDistance, settings, fSettings);
             gui.ResetTerrainFlag();
         }
 
         if (gui.PlantNeedsRegeneration())
         {
             std::cout << "Regenerating plants..." << std::endl;
-            lGen = LSystemsGenerator(lSettings); 
+            lGen = LSystemsGenerator(lSettings);
             std::string newS = lGen.Generate(6);
             turtleInterpreter newTurtle(25.0f, 0.05f, 0.03f);
             std::vector<glm::mat4> newTransforms = newTurtle.Translate(newS);
-            plants = pGen.Generate(newTransforms, cylSettings);  
+            plants = pGen.Generate(newTransforms, cylSettings);
             gui.ResetPlantFlag();
         }
 
-        
+
 
         // Terrain shader
         terrainShader.use();
@@ -217,14 +217,14 @@ int main()
         terrainShader.setFloat("maxMeshHeight", settings.maxMeshHeight);
 
 
-    
 
 
 
-      
+
+
 
         manager.Update(camera.GetPosition());
-        manager.Draw(terrainShader,plantShader);
+        manager.Draw(terrainShader, plantShader);
 
         plantShader.use();
         plantShader.setMat4("view", view);
@@ -269,7 +269,7 @@ void process_input(GLFWwindow* window, float deltaTime, GUI& gui)
         else
         {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            firstMouse = true; 
+            firstMouse = true;
             std::cout << "GUI Mode: OFF (camera control)" << std::endl;
         }
     }

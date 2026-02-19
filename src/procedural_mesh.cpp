@@ -1,6 +1,8 @@
 #include "procedural_mesh.hpp"
+
+#include <cmath>
+#include <utility>
 #include <glad/glad.h>
-#include <cstddef>
 proceduralMesh::proceduralMesh(const meshData& data)
 {
 	verticies = data.verticies;
@@ -24,13 +26,16 @@ proceduralMesh::~proceduralMesh()
 
 void proceduralMesh::SetupMesh()
 {
+	// lineVerts: the grid is NxN, so sqrt(vertexCount) gives us N
+	lineVerts = static_cast<int>(std::round(std::sqrt((double)verticies.size())));
+	vboSize = static_cast<GLsizeiptr>(sizeof(vertex) * verticies.size());
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * verticies.size(), verticies.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * verticies.size(), verticies.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indicies.size(), indicies.data(), GL_STATIC_DRAW);
 	

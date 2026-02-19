@@ -34,7 +34,10 @@ void chunkManager::Update(const glm::vec3& worldPos)
 		if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		{
 			meshData data = it->second.get();
-			activeChunks[it->first] = std::make_unique<proceduralMesh>(data);
+			chunkCoord coord = it->first;
+			auto mesh = std::make_unique<proceduralMesh>(data);
+			SmoothBorders(coord, *mesh);
+			activeChunks[coord] = std::move(mesh);
 			it = pendingChunks.erase(it);
 		}
 		else
@@ -80,4 +83,31 @@ chunkCoord chunkManager::GetChunkCoordFromPosition(glm::vec3 pos)
 	int x = std::floor(pos.x / (float)settings.chunkSize);
 	int z = std::floor(pos.z / (float)settings.chunkSize);
 	return { x,z };
+}
+
+void chunkManager::SmoothBorders(const chunkCoord& c, proceduralMesh& newChunk)
+{
+	struct Edges
+	{
+		chunkCoord offset;
+		ChunkEdge edgeOfNewChunk;
+		ChunkEdge edgeOfNeighbour;
+	};
+	const Edges neighbors[4] =
+	{
+		{ { +1,  0 }, ChunkEdge::PosX, ChunkEdge::NegX },
+		{ { -1,  0 }, ChunkEdge::NegX, ChunkEdge::PosX },
+		{ {  0, +1 }, ChunkEdge::PosZ, ChunkEdge::NegZ },
+		{ {  0, -1 }, ChunkEdge::NegZ, ChunkEdge::PosZ },
+	};
+	for (const auto& e : neighbors)
+	{
+		chunkCoord neighCoord = { c.first + e.offset.first,c.second + e.offset.second };
+		auto it = activeChunks.find(neighCoord);
+		if (it == activeChunks.end()) continue; // neighbour not loaded yet
+		proceduralMesh& neighb = *it->second;
+		int lineVerts = newChunk.GetLineVerts();
+
+		smooth.Dispatch(newChunk.GetVBO(), neighb.GetVBO(), e.edgeOfNewChunk, lineVerts, newChunk.GetVBOSize(), neighb.GetVBOSize());
+	}
 }
